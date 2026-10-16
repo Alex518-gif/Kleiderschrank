@@ -1,5 +1,5 @@
 // Offline-Fähigkeit: App-Dateien und das Freistell-Modell werden zwischengespeichert.
-const VERSION = 'ks-v11';
+const VERSION = 'ks-v12';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'db.js', 'img.js', 'meta.js', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-512.png', 'retro-leopard.svg', 'retro.css', 'leo.css', 'leopard-dunkel.svg'];
 const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'staticimgly.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
