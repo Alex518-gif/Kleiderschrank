@@ -394,3 +394,20 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 .style-row { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: var(--bg); border-radius: 12px; font-size: 14px; }
 .style-row i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .15); flex: none; }
 .style-row span { margin-left: 4px; }
+
+/* Geheimnis */
+.app-version { cursor: pointer; -webkit-user-select: none; user-select: none; }
+.love { text-align: center; }
+.love-heart { font-size: 58px; line-height: 1; color: #e0556f; margin: 8px 0 12px; animation: beat 1.3s ease-in-out infinite; }
+@keyframes beat { 0%, 100% { scale: 1; } 15% { scale: 1.18; } 30% { scale: 1; } 45% { scale: 1.12; } }
+.love-text { font: 400 19px/1.5 "New York", ui-serif, Georgia, serif; color: var(--ink); margin: 0 6px; text-wrap: balance; }
+.love-sign { font: 600 32px/1.2 "Dancing Script", "Snell Roundhand", "Segoe Script", cursive; color: #c0485f; margin: 18px 0 8px; }
+.heart-float {
+  position: fixed; bottom: -40px; z-index: 40; color: #e0556f; pointer-events: none;
+  animation: float-up 4s ease-in forwards; text-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+}
+@keyframes float-up {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(-112vh) rotate(25deg); opacity: 0; }
+}

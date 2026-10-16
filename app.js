@@ -22,7 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
-const APP_VERSION = 12;
+const APP_VERSION = 13;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -1494,9 +1494,37 @@ async function importBackup(e) {
 
 function renderStat() {
   const app = $('#app').getBoundingClientRect();
-  $('#appVersion').textContent = `Version ${APP_VERSION} · Bildschirm ${innerWidth}×${innerHeight} · App ${Math.round(app.width)} px · Seite ${document.documentElement.scrollWidth} px`;
+  $('#appVersion').textContent = `Version ${APP_VERSION} · Bildschirm ${innerWidth}×${innerHeight} · App ${Math.round(app.width)} px · Seite ${document.documentElement.scrollWidth} px · ♡`;
   const owned = state.items.filter((i) => !i.wish).length;
   $('#stat').textContent = `${owned} Teile im Schrank, ${state.outfits.length} Outfits gemerkt, ${state.trips.length} Reisen geplant.`;
+}
+
+// ---------- Geheimnis: 5× auf die Versionszeile tippen ----------
+let loveTaps = 0, loveTimer;
+function tapVersion() {
+  loveTaps++;
+  clearTimeout(loveTimer);
+  loveTimer = setTimeout(() => (loveTaps = 0), 2000);
+  if (loveTaps < 5) return;
+  loveTaps = 0;
+  closeSheet($('#sheetMenu'));
+  openSheet($('#sheetLove'));
+  rainHearts();
+}
+
+function rainHearts() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (let i = 0; i < 30; i++) {
+    const h = document.createElement('span');
+    h.className = 'heart-float';
+    h.textContent = ['♥', '♡', '❤'][i % 3];
+    h.style.left = Math.random() * 96 + 'vw';
+    h.style.fontSize = 16 + Math.random() * 26 + 'px';
+    h.style.animationDelay = Math.random() * 1.8 + 's';
+    h.style.animationDuration = 3 + Math.random() * 2 + 's';
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7500);
+  }
 }
 
 // ---------- Start ----------
@@ -1686,6 +1714,7 @@ async function init() {
     toast('Teil gelöscht');
   };
   $('#whyClose').onclick = hideWhy;
+  $('#appVersion').onclick = tapVersion;
   $('#btnExport').onclick = exportBackup;
   $('#inImport').onchange = importBackup;
 
