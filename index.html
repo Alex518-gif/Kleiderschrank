@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Isabells Schrank">
+<meta name="theme-color" content="#f7f0ea">
+<title>Isabells Kleiderschrank</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9.2-9A4.9 4.9 0 0 1 12 6.3 4.9 4.9 0 0 1 21.2 11C19 15.6 12 20 12 20Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-shuffle" viewBox="0 0 24 24"><path d="M3 7h3.5c2 0 3.2 1 4.3 2.7l2.4 4.6c1 1.7 2.3 2.7 4.3 2.7H21M17.5 13.5 21 17l-3.5 3.5M3 17h3.5c1.3 0 2.3-.4 3.1-1.2M13.4 8.2C14.2 7.4 15.2 7 16.5 7H21M17.5 3.5 21 7l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.5-2.5h7L17 8h3v11H4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13.2" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m4 17 5-5 4 4 2.5-2.5L20 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="15.5" cy="9" r="1.6" fill="currentColor"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 3v4M16 3v4M8.5 13.2l2.4 2.4 4.6-4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8M6 11H5v9.5h14V11h-1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div id="app">
+  <header class="top">
+    <div class="title">
+      <h1><span class="owner">Isabells</span>Kleiderschrank</h1>
+      <button class="weather" id="weatherLine" hidden></button>
+    </div>
+    <div class="top-actions">
+      <button id="btnFilter" class="icon-btn" aria-label="Filter"><svg><use href="#i-filter"/></svg><span class="dot" id="filterDot" hidden></span></button>
+      <button id="btnShare" class="icon-btn" aria-label="Outfit als Bild teilen"><svg><use href="#i-share"/></svg></button>
+      <button id="btnOutfits" class="icon-btn" aria-label="Gemerkte Outfits"><svg><use href="#i-heart"/></svg><span id="outfitCount" class="badge" hidden></span></button>
+      <button id="btnMenu" class="icon-btn" aria-label="Menü"><svg><use href="#i-dots"/></svg></button>
+    </div>
+  </header>
+
+  <main class="stage" id="stage">
+    <div class="figure-wrap">
+      <div class="figure" id="figure"></div>
+    </div>
+    <button class="nav prev" id="btnPrev" aria-label="Vorheriges Teil"><svg><use href="#i-left"/></svg></button>
+    <button class="nav next" id="btnNext" aria-label="Nächstes Teil"><svg><use href="#i-right"/></svg></button>
+    <div class="hint" id="stageHint"></div>
+  </main>
+
+  <nav class="cats" id="cats" role="tablist"></nav>
+
+  <section class="wheel" id="wheel" aria-label="Teile auswählen">
+    <div class="wheel-track" id="wheelTrack"></div>
+  </section>
+
+  <footer class="bottom">
+    <button id="btnSuggest" class="round-btn" aria-label="Outfit-Vorschlag nach Wetter"><svg><use href="#i-sun"/></svg><span>Vorschlag</span></button>
+    <button id="btnShuffle" class="round-btn" aria-label="Zufälliges Outfit"><svg><use href="#i-shuffle"/></svg><span>Zufall</span></button>
+    <button id="btnAdd" class="add-btn" aria-label="Teil hinzufügen"><svg><use href="#i-plus"/></svg></button>
+    <button id="btnSave" class="round-btn" aria-label="Outfit merken"><svg><use href="#i-heart"/></svg><span>Merken</span></button>
+    <button id="btnWorn" class="round-btn" aria-label="Heute getragen"><svg><use href="#i-check"/></svg><span>Getragen</span></button>
+  </footer>
+</div>
+
+<!-- Teil hinzufügen -->
+<div class="sheet" id="sheetAdd" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <h2>Neues Teil</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+
+    <div class="step" data-step="pick">
+      <p class="label">Was ist es?</p>
+      <div class="chip-row" id="addCats"></div>
+      <label class="switch-row"><input type="checkbox" id="addWish"><span>🛍 Nur zum Ausprobieren – noch nicht gekauft (Wunschliste)</span></label>
+      <div class="big-actions">
+        <label class="big-btn primary"><svg><use href="#i-camera"/></svg>Foto aufnehmen
+          <input type="file" accept="image/*" capture="environment" id="inCamera" hidden></label>
+        <label class="big-btn"><svg><use href="#i-image"/></svg>Aus Fotos oder Screenshots wählen
+          <input type="file" accept="image/*" id="inGallery" hidden></label>
+      </div>
+      <p class="tip">Tipp: Teil glatt auf einen ruhigen Untergrund legen und von oben fotografieren. Für die Wunschliste geht auch ein Screenshot aus dem Onlineshop, am besten ein Produktfoto ohne Model.</p>
+    </div>
+
+    <div class="step" data-step="busy" hidden>
+      <div class="busy">
+        <div class="spinner"></div>
+        <p id="busyText">Hintergrund wird entfernt …</p>
+        <div class="progress"><div id="busyBar"></div></div>
+        <p class="tip">Beim ersten Mal wird einmalig das Freistell-Modell geladen (ca. 40 MB, am besten im WLAN).</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="result" hidden>
+      <div class="preview checker"><img id="previewImg" alt="Vorschau"></div>
+      <div class="seg" id="modeSeg">
+        <button data-mode="ai">KI</button>
+        <button data-mode="color">Farbe</button>
+        <button data-mode="orig">Original</button>
+      </div>
+      <div class="slider-row" id="tolRow" hidden>
+        <span>Stärke</span><input type="range" id="tol" min="10" max="110" value="42">
+      </div>
+      <p class="tip" id="modeTip"></p>
+      <div class="row-actions">
+        <button class="btn ghost" id="btnDiscard">Verwerfen</button>
+        <button class="btn primary" id="btnKeep">Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Teil bearbeiten -->
+<div class="sheet compact" id="sheetEdit" hidden>
+  <div class="sheet-backdrop clear" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <div class="seg two tabs" id="editTabs"><button data-tab="sitz">Sitz</button><button data-tab="details">Details</button></div>
+      <button class="icon-btn" data-close aria-label="Fertig"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div class="tab" data-tab="sitz">
+      <div class="slider-row"><span>Größe</span><input type="range" id="adjScale" min="50" max="160" value="100"></div>
+      <div class="slider-row"><span>Links/Rechts</span><input type="range" id="adjX" min="-40" max="40" value="0"></div>
+      <div class="slider-row"><span>Hoch/Runter</span><input type="range" id="adjY" min="-40" max="40" value="0"></div>
+      <div class="slider-row" id="pantsRow" hidden><span>Länge</span>
+        <div class="seg two" id="pantsSeg"><button data-stretch="1">bis zu den Schuhen</button><button data-stretch="0">wie im Foto</button></div>
+      </div>
+      <div class="slider-row" id="shoeRow" hidden><span>Auf dem Foto</span>
+        <div class="seg two" id="shoeSeg"><button data-shoe="single">ein Schuh</button><button data-shoe="pair">ein Paar</button></div>
+      </div>
+      <div class="row-actions">
+        <button class="btn ghost" id="btnFlip">Spiegeln</button>
+        <button class="btn ghost" id="btnResetAdj">Zurücksetzen</button>
+      </div>
+    </div>
+    <div class="tab" data-tab="details" hidden>
+      <p class="stat" id="wornInfo"></p>
+      <p class="label">Saison</p>
+      <div class="seg four" id="dSeason"></div>
+      <p class="label">Anlass</p>
+      <div class="chip-row" id="dOcc"></div>
+      <p class="label">Farben <span class="muted">(automatisch erkannt, antippen zum Ändern)</span></p>
+      <div class="chip-row small" id="dColors"></div>
+      <label class="switch-row"><input type="checkbox" id="dPattern"><span>Gemustert (Streifen, Punkte …)</span></label>
+      <label class="switch-row"><input type="checkbox" id="dWash"><span>🧺 Gerade in der Wäsche</span></label>
+      <label class="switch-row"><input type="checkbox" id="dWish"><span>🛍 Wunschliste – noch nicht gekauft</span></label>
+      <div class="row-actions"><button class="btn danger" id="btnDelete">Teil löschen</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Filter -->
+<div class="sheet" id="sheetFilter" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <h2>Filter</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <p class="tip">Gilt für das Drehrad, „Zufall“ und „Vorschlag“.</p>
+    <p class="label">Saison</p><div class="chip-row" id="fSeason"></div>
+    <p class="label">Anlass</p><div class="chip-row" id="fOcc"></div>
+    <p class="label">Farbe</p><div class="chip-row small" id="fColor"></div>
+    <label class="switch-row"><input type="checkbox" id="fWash"><span>Teile in der Wäsche ausblenden</span></label>
+    <label class="switch-row"><input type="checkbox" id="fWish"><span>Wunschliste ausblenden</span></label>
+    <div class="row-actions">
+      <button class="btn ghost" id="btnFilterReset">Zurücksetzen</button>
+      <button class="btn primary" data-close>Fertig</button>
+    </div>
+  </div>
+</div>
+
+<!-- Outfits -->
+<div class="sheet" id="sheetOutfits" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel tall">
+    <div class="sheet-head">
+      <h2>Gemerkte Outfits</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div class="outfit-grid" id="outfitGrid"></div>
+  </div>
+</div>
+
+<!-- Statistik -->
+<div class="sheet" id="sheetStats" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel tall">
+    <div class="sheet-head">
+      <h2>Dein Schrank in Zahlen</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div id="statsBody"></div>
+  </div>
+</div>
+
+<!-- Kofferpacken -->
+<div class="sheet" id="sheetTrips" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel tall">
+    <div class="sheet-head">
+      <h2 id="tripTitle">Kofferpacken</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div id="tripBody"></div>
+  </div>
+</div>
+
+<!-- Wetter-Ort -->
+<div class="sheet" id="sheetWeather" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <h2>Wetter für Vorschläge</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <p class="tip">Damit „Vorschlag“ zum Wetter passt, braucht die App deinen Ort. Er wird nur gerundet (etwa 10 km genau) an den kostenlosen Wetterdienst Open-Meteo geschickt.</p>
+    <div class="big-actions">
+      <button class="big-btn primary" id="btnGeo">📍 Meinen Standort verwenden</button>
+    </div>
+    <div class="search-row">
+      <input type="text" id="placeInput" placeholder="oder Ort eingeben, z. B. Köln" autocomplete="off">
+      <button class="btn primary" id="btnPlace">Suchen</button>
+    </div>
+    <p class="tip" id="placeCurrent"></p>
+  </div>
+</div>
+
+<!-- Menü -->
+<div class="sheet" id="sheetMenu" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-head">
+      <h2>Mehr</h2>
+      <button class="icon-btn" data-close aria-label="Schließen"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <p class="stat" id="stat"></p>
+    <div class="menu-list">
+      <button class="btn ghost wide" id="btnStats">📊 Dein Schrank in Zahlen</button>
+      <button class="btn ghost wide" id="btnTrips">🧳 Kofferpacken</button>
+      <button class="btn ghost wide" id="btnWeatherPlace">🌤️ Wetter-Ort ändern</button>
+      <label class="switch-row"><input type="checkbox" id="optFigure"><span>Figur anzeigen</span></label>
+      <button class="btn ghost wide" id="btnExport">Sicherung speichern</button>
+      <label class="btn ghost wide">Sicherung laden<input type="file" accept="application/json,.json" id="inImport" hidden></label>
+    </div>
+    <p class="tip">Alle Fotos bleiben nur auf diesem iPhone. Eine Sicherung ab und zu (z. B. in „Dateien“ oder iCloud) schützt vor Verlust.</p>
+  </div>
+</div>
+
+<div class="install-hint" id="installHint" hidden>
+  <p><b>Als App installieren:</b> unten auf <i>Teilen</i> tippen, dann <i>Zum Home-Bildschirm</i>.</p>
+  <button class="icon-btn" id="btnHintClose" aria-label="Hinweis schließen"><svg><use href="#i-close"/></svg></button>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
