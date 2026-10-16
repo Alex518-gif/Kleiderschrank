@@ -371,3 +371,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 /* Leisten: Breite kommt nur vom Bildschirm, nie vom Inhalt (iPhone-Safari) */
 .cats, .wheel, .wheel-track { width: 100%; contain: inline-size; }
 .app-version { font-size: 12px; color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
+
+/* Leeres Drehrad: Hinweis mittig statt auf Kartenbreite ausgerichtet */
+.wheel-track.is-empty { padding: 0 16px; justify-content: center; }
+.wheel-track.is-empty .card.empty { flex: 0 1 260px; }

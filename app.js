@@ -22,7 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
-const APP_VERSION = 6;
+const APP_VERSION = 7;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -334,6 +334,7 @@ function renderWheel() {
   const selId = state.sel[cat.id];
   const items = all.filter((i) => matches(i) || i.id === selId);
   track.innerHTML = '';
+  track.classList.toggle('is-empty', !items.length);
   if (!items.length) {
     wheelList = [];
     const e = document.createElement('button');
