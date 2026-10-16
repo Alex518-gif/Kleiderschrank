@@ -70,7 +70,10 @@ svg { width: 24px; height: 24px; display: block; }
   content: ""; position: absolute; left: 50%; bottom: 4%; width: 62%; aspect-ratio: 1; transform: translateX(-50%);
   background: radial-gradient(circle, var(--bg-2) 0%, transparent 68%); border-radius: 50%;
 }
-.figure-wrap { height: 100%; max-height: 100%; aspect-ratio: 2 / 5; position: relative; padding: 8px 0 4px; }
+.figure-wrap {
+  height: 100%; max-height: 100%; aspect-ratio: 2 / 5; position: relative; padding: 8px 0 4px;
+  scale: var(--zoom, 1); translate: 0 var(--shift, 0%); transition: scale .35s ease, translate .35s ease;
+}
 .figure {
   position: relative; height: 100%; aspect-ratio: 2 / 5; margin: 0 auto;
   transform-origin: 50% 96%;
@@ -335,3 +338,23 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 .stepper { display: flex; align-items: center; gap: 14px; }
 .stepper button { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-2); font-size: 22px; }
 .stepper b { font-size: 20px; min-width: 70px; text-align: center; }
+
+/* Kleine Höhen (Safari mit Leisten, kleinere iPhones): Bedienleisten kompakter */
+@media (max-height: 760px) {
+  .top { padding-top: 6px; }
+  .top h1 { font-size: 21px; }
+  .top h1 .owner { font-size: 14px; }
+  .cats { padding-top: 4px; padding-bottom: 2px; }
+  .cats .chip { padding: 5px 12px; font-size: 14px; }
+  .wheel { height: 88px; }
+  .card { width: 64px; height: 72px; border-radius: 14px; padding: 6px; }
+  .card.none { font-size: 11px; }
+  .card.none span { font-size: 20px; }
+  .card.empty { width: 220px; }
+  .wheel-track { padding: 0 calc(50% - 32px); gap: 8px; }
+  .bottom { padding-top: 0; padding-bottom: calc(4px + var(--safe-b)); }
+  .add-btn { width: 52px; height: 52px; }
+  .add-btn svg { width: 26px; height: 26px; }
+  .round-btn svg { width: 22px; height: 22px; }
+  .round-btn { font-size: 11px; }
+}

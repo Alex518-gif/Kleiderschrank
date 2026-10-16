@@ -205,6 +205,20 @@ function setLayer(layers, cat, itemId, dir = 0) {
 function renderLayers(layers, sel, dir = 0) {
   const e = effective(sel);
   for (const c of CATS) setLayer(layers, c.id, e[c.id], dir);
+  if (layers === mainLayers) fitFigure(e);
+}
+
+// Ohne Figur auf die angezogenen Teile zoomen, damit das Outfit den Platz füllt
+function fitFigure(e = effective(state.sel)) {
+  const wrap = $('#figure').parentElement;
+  let top = 100, bottom = 0;
+  if (!state.showFigure) {
+    for (const c of CATS) if (e[c.id]) { top = Math.min(top, c.box[1]); bottom = Math.max(bottom, c.box[1] + c.box[3]); }
+  }
+  if (bottom <= top) { wrap.style.setProperty('--zoom', 1); wrap.style.setProperty('--shift', '0%'); return; }
+  const zoom = Math.min(1.45, 91 / (bottom - top));
+  wrap.style.setProperty('--zoom', zoom.toFixed(3));
+  wrap.style.setProperty('--shift', ((50 - (top + bottom) / 2) * zoom).toFixed(2) + '%');
 }
 
 function popFigure() {
@@ -1333,6 +1347,7 @@ function updateHint() {
 function applyFigureOption() {
   $('#figure').classList.toggle('no-figure', !state.showFigure);
   $('#optFigure').checked = state.showFigure;
+  if (mainLayers) fitFigure();
 }
 
 // Teile von früher bekommen ihre Farben nachträglich
