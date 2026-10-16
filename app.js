@@ -22,7 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
-const APP_VERSION = 13;
+const APP_VERSION = 14;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -326,7 +326,11 @@ function setActive(cat) {
   renderCats();
   renderWheel();
   const chip = $('#cats').children[CATS.findIndex((c) => c.id === cat)];
-  if (chip) chip.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  // nur die Leiste selbst scrollen; scrollIntoView würde sonst die ganze App verschieben
+  if (chip) {
+    const nav = $('#cats');
+    nav.scrollTo({ left: chip.offsetLeft - (nav.clientWidth - chip.offsetWidth) / 2, behavior: 'smooth' });
+  }
 }
 
 function renderWheel() {

@@ -52,6 +52,7 @@ svg { width: 24px; height: 24px; display: block; }
   position: fixed;
   inset: 0;
   overflow: hidden;
+  overflow: clip;  /* lässt sich auch per Skript nicht verschieben */
   display: grid;
   grid-template-rows: auto 1fr auto auto auto;
   /* Safari rechnet sonst die volle Breite der Kategorienleiste in die Seitenbreite ein */
@@ -369,7 +370,9 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 #app > * { min-width: 0; max-width: 100%; }
 
 /* Leisten: Breite kommt nur vom Bildschirm, nie vom Inhalt (iPhone-Safari) */
-.cats, .wheel, .wheel-track { width: 100%; contain: inline-size; }
+/* Breite kommt aus dem Raster (abzüglich Rand), nie aus dem Inhalt */
+.cats, .wheel { width: auto; contain: inline-size; }
+.wheel-track { width: 100%; contain: inline-size; }
 .app-version { font-size: 12px; color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
 
 /* Leeres Drehrad: Hinweis mittig statt auf Kartenbreite ausgerichtet */
