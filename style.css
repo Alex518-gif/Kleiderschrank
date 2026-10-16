@@ -375,3 +375,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 /* Leeres Drehrad: Hinweis mittig statt auf Kartenbreite ausgerichtet */
 .wheel-track.is-empty { padding: 0 16px; justify-content: center; }
 .wheel-track.is-empty .card.empty { flex: 0 1 260px; }
+
+/* Wetterzeile in eigener Zeile über die volle Breite, damit der Ort hineinpasst */
+.top { flex-wrap: wrap; }
+.top .weather { flex: 1 0 100%; margin-top: 2px; }
