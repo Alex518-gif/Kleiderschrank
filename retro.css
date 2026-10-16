@@ -1,0 +1,211 @@
+/* =====================================================================
+   Retro-Design: angelehnt an den Kleiderschrank-Computer aus dem Film
+   „Clueless“ (1995). Leopard links und rechts, hellgrau-blaues Fenster
+   in der Mitte, graue 3D-Knöpfe, lila Aktionsknöpfe, Pixelschrift.
+   Greift nur, wenn <html> die Klasse „retro“ hat.
+   ===================================================================== */
+.season, .retro-label { display: none; }
+
+html.retro {
+  --r-navy: #1b1f3b;
+  --r-screen: #cdd3e1;
+  --r-panel: #e3e7ef;
+  --r-face: #b8bcc6;
+  --r-hi: #f4f6fb;
+  --r-lo: #5f636d;
+  --r-ink: #191b24;
+  --r-purple: #7c6cf2;
+  --r-purple-hi: #bdb5ff;
+  --r-purple-lo: #3a2fa6;
+  --r-purple-ink: #14104a;
+  --r-pink: #ff9bd9;
+  --r-sys: #b8bcc6;           /* Rand unter der iPhone-Statusleiste (helles iPhone) */
+  --r-pixel: "Silkscreen", "Courier New", monospace;
+  --r-term: "VT323", "Courier New", monospace;
+  /* moderne Farbwerte auf das helle Retro-Fenster umbiegen, auch im Nachtmodus */
+  --bg: #cdd3e1; --bg-2: #b8bcc6; --card: #e3e7ef; --ink: #191b24; --ink-2: #3d4152;
+  --line: #5f636d; --accent: #7c6cf2; --accent-ink: #fff; --accent-soft: #bdb5ff;
+  --shadow: 3px 3px 0 rgba(0, 0, 0, .35);
+}
+@media (prefers-color-scheme: dark) {
+  html.retro { --r-sys: #1b1f3b; }  /* dunkles iPhone: weiße Statusleiste auf Navy */
+}
+html.retro body { font-family: var(--r-term); font-size: 19px; background: var(--r-sys); }
+html.retro #app { background: var(--r-sys); }
+
+/* Titelleiste */
+html.retro .top {
+  position: relative; z-index: 3;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title season" "weather weather";
+  align-items: center; gap: 6px 8px; padding: 8px 10px 7px; background: var(--r-navy); color: #e9ecff;
+  border-bottom: 3px solid #0d0f1f;
+}
+html.retro .top .title { grid-area: title; min-width: 0; }
+html.retro .top h1 {
+  font: 700 12px/1.2 var(--r-pixel); letter-spacing: .02em; text-transform: uppercase; color: #e9ecff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+html.retro .top h1 .owner { display: inline; font: inherit; color: var(--r-pink); letter-spacing: inherit; }
+html.retro .top h1 .owner::after { content: " "; }
+html.retro .season {
+  display: block; grid-area: season; font: 400 10px/1 var(--r-pixel); text-transform: uppercase; letter-spacing: .05em;
+  color: #e9ecff; border: 2px solid #8e96c8; padding: 4px 6px; white-space: nowrap;
+}
+html.retro .top .weather { grid-area: weather; flex: none; margin: 0; font: 17px/1 var(--r-term); letter-spacing: -.01em; color: #b9c0ea; }
+/* Die vier kleinen Knöpfe sitzen wie Gerätetasten rechts auf dem Leopardenrand */
+html.retro .top-actions {
+  position: absolute; top: calc(100% + 14px); right: 12px; flex-direction: column; gap: 8px;
+}
+html.retro .top-actions .icon-btn,
+html.retro .sheet-head .icon-btn {
+  width: 32px; height: 30px; border-radius: 0; background: var(--r-face); color: var(--r-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo);
+}
+html.retro .top-actions .icon-btn svg,
+html.retro .sheet-head .icon-btn svg { width: 17px; height: 17px; }
+html.retro .icon-btn:active { box-shadow: inset 2px 2px 0 var(--r-lo), inset -2px -2px 0 var(--r-hi); }
+html.retro .badge {
+  border-radius: 0; background: var(--r-purple); color: #fff; font: 400 9px/1 var(--r-pixel);
+  top: -7px; right: -7px; border: 1px solid #000;
+}
+html.retro .dot { border-radius: 0; top: 3px; right: 3px; border-color: var(--r-face); }
+
+/* Bühne: Leopard mit hellem Fenster in der Mitte */
+html.retro .stage { background: #e7cfa6 url("retro-leopard.svg") 0 0 / 180px 180px; border-bottom: 3px solid #0d0f1f; }
+html.retro .stage::before {
+  left: 50%; top: 10px; bottom: 10px; width: min(66%, 300px); height: auto; aspect-ratio: auto;
+  transform: translateX(-50%); border-radius: 0; background: var(--r-screen);
+  box-shadow: inset 3px 3px 0 var(--r-lo), inset -3px -3px 0 var(--r-hi), 0 0 0 3px var(--r-navy), 6px 6px 0 rgba(0, 0, 0, .25);
+}
+html.retro .hint {
+  left: 50%; right: auto; width: min(66%, 300px); transform: translateX(-50%); bottom: 18px; padding: 0 10px;
+  font: 18px/1.1 var(--r-term); color: var(--r-ink);
+}
+html.retro .nav {
+  top: auto; bottom: 16px; translate: none;
+  border-radius: 0; width: 40px; height: 40px; background: var(--r-face); color: var(--r-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo), 3px 3px 0 rgba(0, 0, 0, .3);
+}
+html.retro .nav:active { scale: 1; box-shadow: inset 2px 2px 0 var(--r-lo), inset -2px -2px 0 var(--r-hi); }
+html.retro .piece img { filter: drop-shadow(2px 3px 0 rgba(20, 22, 40, .22)); }
+
+/* Kategorien-Leiste wie im Film („SHOES JEWELRY SCARVES …“) */
+html.retro .cats { background: var(--r-navy); padding: 5px 6px; gap: 2px; border-bottom: 3px solid #0d0f1f; }
+html.retro .cats .chip {
+  border-radius: 0; border: 0; background: transparent; color: #e9ecff; padding: 6px 7px;
+  font: 400 11px/1 var(--r-pixel); text-transform: uppercase; letter-spacing: .03em;
+}
+html.retro .cats .chip .n { font: 15px/1 var(--r-term); margin-left: 3px; }
+html.retro .cats .chip[aria-selected="true"] { background: #e9ecff; color: var(--r-navy); }
+
+/* Drehrad als graue Kacheln */
+html.retro .wheel { background: var(--r-face); box-shadow: inset 0 2px 0 var(--r-hi); }
+html.retro .wheel::before { background: linear-gradient(90deg, var(--r-face), transparent); }
+html.retro .wheel::after { background: linear-gradient(-90deg, var(--r-face), transparent); }
+html.retro .card {
+  border-radius: 0; background: var(--r-panel); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo);
+}
+html.retro .card.current { box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo), 0 0 0 3px var(--r-purple); }
+html.retro .card.none { font: 16px/1 var(--r-term); color: var(--r-ink); }
+html.retro .card.empty { font: 18px/1.05 var(--r-term); color: var(--r-ink); border: 1px dashed #000; }
+html.retro .card .edit {
+  border-radius: 0; background: var(--r-purple); color: #fff; border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-purple-hi), inset -2px -2px 0 var(--r-purple-lo);
+}
+
+/* Lila Aktionsknöpfe wie „DRESS ME / AUTO DRESS“ */
+html.retro .bottom {
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px;
+  padding: 8px 8px calc(8px + var(--safe-b)); background: var(--r-face); box-shadow: inset 0 2px 0 var(--r-hi);
+}
+html.retro .round-btn,
+html.retro .add-btn {
+  width: auto; height: 44px; border-radius: 0; display: grid; place-items: center; padding: 0 2px;
+  background: var(--r-purple); color: var(--r-purple-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-purple-hi), inset -2px -2px 0 var(--r-purple-lo);
+  font: 400 9px/1.1 var(--r-pixel); text-transform: uppercase; letter-spacing: 0;
+}
+html.retro .round-btn svg,
+html.retro .add-btn svg { display: none; }
+html.retro .round-btn span { color: inherit; font: inherit; }
+html.retro .add-btn .retro-label { display: block; }
+html.retro .add-btn { background: #ffd23f; box-shadow: inset 2px 2px 0 #fff2b8, inset -2px -2px 0 #b38b14; }
+html.retro .round-btn:active,
+html.retro .add-btn:active { scale: 1; box-shadow: inset 2px 2px 0 var(--r-purple-lo), inset -2px -2px 0 var(--r-purple-hi); }
+html.retro .round-btn.saved,
+html.retro .round-btn.on { background: var(--r-pink); }
+
+/* Fenster (Blätter) mit Titelleiste */
+html.retro .sheet-backdrop { background: rgba(10, 12, 30, .45); }
+html.retro .sheet-panel {
+  border-radius: 0; background: var(--r-screen); color: var(--r-ink); border: 2px solid #000; padding-top: 0;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo);
+}
+html.retro .sheet-head { margin: 0 -18px 8px; padding: 6px 10px 6px 16px; background: var(--r-navy); color: #e9ecff; }
+html.retro .sheet-head h2 { font: 700 13px/1.2 var(--r-pixel); text-transform: uppercase; letter-spacing: .05em; color: #e9ecff; }
+html.retro .sheet .label,
+html.retro .sec { font: 400 12px/1.3 var(--r-pixel); text-transform: uppercase; letter-spacing: .04em; color: var(--r-navy); }
+html.retro .tip,
+html.retro .stat,
+html.retro .muted { font-family: var(--r-term); font-size: 18px; color: #3d4152; }
+html.retro .sheet .chip {
+  border-radius: 0; background: var(--r-face); color: var(--r-ink); border: 1px solid #000; padding: 5px 9px;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo); font: 18px/1 var(--r-term);
+}
+html.retro .sheet .chip[aria-selected="true"] {
+  background: var(--r-purple); color: #fff; box-shadow: inset 2px 2px 0 var(--r-purple-lo), inset -2px -2px 0 var(--r-purple-hi);
+}
+html.retro .chip i { border-radius: 0; border-color: #000; }
+html.retro .btn,
+html.retro .big-btn {
+  border-radius: 0; background: var(--r-face); color: var(--r-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo);
+  font: 400 11px/1.2 var(--r-pixel); text-transform: uppercase; letter-spacing: .03em;
+}
+html.retro .btn.primary,
+html.retro .big-btn.primary {
+  background: var(--r-purple); color: #fff; box-shadow: inset 2px 2px 0 var(--r-purple-hi), inset -2px -2px 0 var(--r-purple-lo);
+}
+html.retro .btn.danger { color: #a3161c; }
+html.retro .btn:active,
+html.retro .big-btn:active { scale: 1; box-shadow: inset 2px 2px 0 var(--r-lo), inset -2px -2px 0 var(--r-hi); }
+html.retro .seg { border-radius: 0; background: var(--r-face); border: 1px solid #000; padding: 2px; }
+html.retro .seg button { border-radius: 0; font: 18px/1 var(--r-term); color: var(--r-ink); }
+html.retro .seg button.on {
+  background: var(--r-purple); color: #fff; box-shadow: inset 2px 2px 0 var(--r-purple-lo), inset -2px -2px 0 var(--r-purple-hi);
+}
+html.retro .slider-row,
+html.retro .switch-row { font-size: 18px; color: var(--r-ink); }
+html.retro input[type=range],
+html.retro .switch-row input,
+html.retro .pack-row input { accent-color: var(--r-purple); }
+html.retro .search-row input {
+  border-radius: 0; background: #fff; color: var(--r-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-lo); font: 20px var(--r-term);
+}
+html.retro .preview { border-radius: 0; border: 1px solid #000; }
+html.retro .outfit,
+html.retro .thumb,
+html.retro .num,
+html.retro .hist-row,
+html.retro .trip-row,
+html.retro .day,
+html.retro .pack-row {
+  border-radius: 0; background: var(--r-panel); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo);
+}
+html.retro .num b { font: 700 18px/1.3 var(--r-pixel); }
+html.retro .outfit .del,
+html.retro .day-actions button { border-radius: 0; border: 1px solid #000; background: var(--r-face); font: 15px var(--r-term); }
+html.retro .spinner { border-radius: 0; animation-timing-function: steps(8); }
+html.retro .progress { border-radius: 0; background: #fff; border: 1px solid #000; }
+html.retro .progress div { background: repeating-linear-gradient(90deg, var(--r-purple) 0 9px, transparent 9px 12px); }
+html.retro .toast {
+  border-radius: 0; background: var(--r-screen); color: var(--r-ink); border: 2px solid #000;
+  box-shadow: inset 2px 2px 0 var(--r-hi), inset -2px -2px 0 var(--r-lo), 4px 4px 0 rgba(0, 0, 0, .35);
+  font: 20px/1.1 var(--r-term);
+}
+html.retro .install-hint { border-radius: 0; background: var(--r-navy); color: #e9ecff; border: 2px solid #000; font: 18px var(--r-term); }
+html.retro .install-hint .icon-btn { color: #e9ecff; }
+html.retro .app-version { font: 16px var(--r-term); }

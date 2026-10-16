@@ -12,7 +12,16 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-512.png">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="retro.css">
+<script>
+  // Design vor dem ersten Zeichnen setzen, damit nichts flackert (Standard: Retro)
+  try { if (JSON.parse(localStorage.getItem('theme')) !== 'modern') document.documentElement.classList.add('retro'); }
+  catch (e) { document.documentElement.classList.add('retro'); }
+</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -37,6 +46,7 @@
     <div class="title">
       <h1><span class="owner">Isabells</span>Kleiderschrank</h1>
     </div>
+    <span class="season" id="seasonLabel"></span>
     <div class="top-actions">
       <button id="btnFilter" class="icon-btn" aria-label="Filter"><svg><use href="#i-filter"/></svg><span class="dot" id="filterDot" hidden></span></button>
       <button id="btnShare" class="icon-btn" aria-label="Outfit als Bild teilen"><svg><use href="#i-share"/></svg></button>
@@ -64,7 +74,7 @@
   <footer class="bottom">
     <button id="btnSuggest" class="round-btn" aria-label="Outfit-Vorschlag nach Wetter"><svg><use href="#i-sun"/></svg><span>Vorschlag</span></button>
     <button id="btnShuffle" class="round-btn" aria-label="Zufälliges Outfit"><svg><use href="#i-shuffle"/></svg><span>Zufall</span></button>
-    <button id="btnAdd" class="add-btn" aria-label="Teil hinzufügen"><svg><use href="#i-plus"/></svg></button>
+    <button id="btnAdd" class="add-btn" aria-label="Teil hinzufügen"><svg><use href="#i-plus"/></svg><span class="retro-label">+ Neu</span></button>
     <button id="btnSave" class="round-btn" aria-label="Outfit merken"><svg><use href="#i-heart"/></svg><span>Merken</span></button>
     <button id="btnWorn" class="round-btn" aria-label="Heute getragen"><svg><use href="#i-check"/></svg><span>Getragen</span></button>
   </footer>
@@ -249,6 +259,7 @@
       <button class="btn ghost wide" id="btnStats">📊 Dein Schrank in Zahlen</button>
       <button class="btn ghost wide" id="btnTrips">🧳 Kofferpacken</button>
       <button class="btn ghost wide" id="btnWeatherPlace">🌤️ Wetter-Ort ändern</button>
+      <label class="switch-row"><input type="checkbox" id="optRetro"><span>Retro-Design (90er-Computer)</span></label>
       <label class="switch-row"><input type="checkbox" id="optFigure"><span>Figur anzeigen</span></label>
       <button class="btn ghost wide" id="btnExport">Sicherung speichern</button>
       <label class="btn ghost wide">Sicherung laden<input type="file" accept="application/json,.json" id="inImport" hidden></label>

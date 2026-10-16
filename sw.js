@@ -1,7 +1,7 @@
 // Offline-Fähigkeit: App-Dateien und das Freistell-Modell werden zwischengespeichert.
-const VERSION = 'ks-v8';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'db.js', 'img.js', 'meta.js', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-512.png'];
-const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'staticimgly.com'];
+const VERSION = 'ks-v9';
+const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'db.js', 'img.js', 'meta.js', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-512.png', 'retro-leopard.svg', 'retro.css'];
+const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'staticimgly.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -26,7 +26,7 @@ self.addEventListener('fetch', (e) => {
       const hit = await c.match(req);
       if (hit) return hit;
       const res = await fetch(req);
-      if (res.ok) c.put(req, res.clone());
+      if (res.ok || res.type === 'opaque') c.put(req, res.clone());
       return res;
     }));
     return;
