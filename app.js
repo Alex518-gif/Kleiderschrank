@@ -22,6 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
+const APP_VERSION = 6;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -1334,6 +1335,8 @@ async function importBackup(e) {
 }
 
 function renderStat() {
+  const app = $('#app').getBoundingClientRect();
+  $('#appVersion').textContent = `Version ${APP_VERSION} · Bildschirm ${innerWidth}×${innerHeight} · App ${Math.round(app.width)} px · Seite ${document.documentElement.scrollWidth} px`;
   const owned = state.items.filter((i) => !i.wish).length;
   $('#stat').textContent = `${owned} Teile im Schrank, ${state.outfits.length} Outfits gemerkt, ${state.trips.length} Reisen geplant.`;
 }

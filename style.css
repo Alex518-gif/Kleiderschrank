@@ -48,7 +48,10 @@ svg { width: 24px; height: 24px; display: block; }
 [hidden] { display: none !important; }
 
 #app {
-  height: 100dvh;
+  /* fest an den Bildschirm geheftet: kann nie breiter oder höher als das Display werden */
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr auto auto auto;
   /* Safari rechnet sonst die volle Breite der Kategorienleiste in die Seitenbreite ein */
@@ -364,3 +367,7 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 
 /* Jede Zeile darf höchstens so breit wie der Bildschirm sein, lange Leisten scrollen in sich */
 #app > * { min-width: 0; max-width: 100%; }
+
+/* Leisten: Breite kommt nur vom Bildschirm, nie vom Inhalt (iPhone-Safari) */
+.cats, .wheel, .wheel-track { width: 100%; contain: inline-size; }
+.app-version { font-size: 12px; color: var(--ink-2); margin-top: 14px; font-variant-numeric: tabular-nums; }
