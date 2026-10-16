@@ -22,7 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
-const APP_VERSION = 10;
+const APP_VERSION = 11;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -1505,9 +1505,13 @@ function updateHint() {
   $('#btnPrev').hidden = $('#btnNext').hidden = !state.items.length;
 }
 
-function applyTheme(retro) {
-  document.documentElement.classList.toggle('retro', retro);
-  $('#optRetro').checked = retro;
+// Designs: Leo (Standard), Retro (90er-Computer), Schlicht
+function applyTheme(theme) {
+  if (!['leo', 'retro', 'modern'].includes(theme)) theme = 'leo';
+  const root = document.documentElement;
+  root.classList.toggle('leo', theme === 'leo');
+  root.classList.toggle('retro', theme === 'retro');
+  document.querySelectorAll('#themeSeg button').forEach((b) => b.classList.toggle('on', b.dataset.theme === theme));
   const month = new Date().getMonth();
   const season = month >= 2 && month <= 4 ? 'Frühlings' : month <= 7 ? 'Sommer' : month <= 10 ? 'Herbst' : 'Winter';
   $('#seasonLabel').textContent = `${season}-Mode`;
@@ -1595,7 +1599,12 @@ async function init() {
   $('#btnGeo').onclick = useGeo;
   $('#btnPlace').onclick = searchPlace;
   $('#placeInput').onkeydown = (e) => { if (e.key === 'Enter') searchPlace(); };
-  $('#optRetro').onchange = (e) => { store('theme', e.target.checked ? 'retro' : 'modern'); applyTheme(e.target.checked); };
+  $('#themeSeg').onclick = (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    store('theme', b.dataset.theme);
+    applyTheme(b.dataset.theme);
+  };
   $('#optFigure').onchange = (e) => { state.showFigure = e.target.checked; store('showFigure', state.showFigure); applyFigureOption(); };
 
   $('#fWash').onchange = (e) => { state.filter.hideWash = e.target.checked; changedFilter(); };
@@ -1681,7 +1690,7 @@ async function init() {
   $('#inImport').onchange = importBackup;
 
   initInstallHint();
-  applyTheme(document.documentElement.classList.contains('retro'));
+  applyTheme(store('theme'));
   await loadAll();
   if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

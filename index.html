@@ -17,10 +17,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=VT323&display=swap">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="retro.css">
+<link rel="stylesheet" href="leo.css">
 <script>
-  // Design vor dem ersten Zeichnen setzen, damit nichts flackert (Standard: Retro)
-  try { if (JSON.parse(localStorage.getItem('theme')) !== 'modern') document.documentElement.classList.add('retro'); }
-  catch (e) { document.documentElement.classList.add('retro'); }
+  // Design vor dem ersten Zeichnen setzen, damit nichts flackert (Standard: Leo)
+  var t; try { t = JSON.parse(localStorage.getItem('theme')); } catch (e) {}
+  if (t !== 'retro' && t !== 'modern') t = 'leo';
+  if (t !== 'modern') document.documentElement.classList.add(t);
 </script>
 </head>
 <body>
@@ -260,7 +262,9 @@
       <button class="btn ghost wide" id="btnStats">📊 Dein Schrank in Zahlen</button>
       <button class="btn ghost wide" id="btnTrips">🧳 Kofferpacken</button>
       <button class="btn ghost wide" id="btnWeatherPlace">🌤️ Wetter-Ort ändern</button>
-      <label class="switch-row"><input type="checkbox" id="optRetro"><span>Retro-Design (90er-Computer)</span></label>
+      <div class="slider-row"><span>Design</span>
+        <div class="seg" id="themeSeg" style="margin:0"><button data-theme="leo">Leo</button><button data-theme="retro">Retro</button><button data-theme="modern">Schlicht</button></div>
+      </div>
       <label class="switch-row"><input type="checkbox" id="optFigure"><span>Figur anzeigen</span></label>
       <button class="btn ghost wide" id="btnExport">Sicherung speichern</button>
       <label class="btn ghost wide">Sicherung laden<input type="file" accept="application/json,.json" id="inImport" hidden></label>
