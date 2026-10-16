@@ -1,5 +1,5 @@
 // Offline-Fähigkeit: App-Dateien und das Freistell-Modell werden zwischengespeichert.
-const VERSION = 'ks-v4';
+const VERSION = 'ks-v5';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'db.js', 'img.js', 'meta.js', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-512.png'];
 const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'staticimgly.com'];
 
@@ -32,12 +32,17 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Eigene Dateien: sofort aus dem Speicher, im Hintergrund aktualisieren
+  // Eigene Dateien: zuerst aus dem Netz (Updates kommen sofort an), offline aus dem Speicher
   if (url.origin === self.location.origin) {
     e.respondWith(caches.open(VERSION).then(async (c) => {
-      const hit = await c.match(req, { ignoreSearch: true });
-      const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => hit);
-      return hit || net;
+      try {
+        const res = await fetch(req, { cache: 'no-cache' });
+        if (res.ok) c.put(req, res.clone());
+        return res;
+      } catch {
+        const hit = await c.match(req, { ignoreSearch: true });
+        return hit || Response.error();
+      }
     }));
   }
 });
