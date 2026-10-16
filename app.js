@@ -1,6 +1,6 @@
 import * as db from './db.js';
 import { blobToCanvas, canvasToBlob, fitPants, keepMainParts, removeBackgroundAI, removeBackgroundColor, removeHanger, trim } from './img.js';
-import { COLORS, analyzeColors, feelTemp, fetchWeather, findPlace, harmonious, hexToRgb, weatherIcon } from './meta.js';
+import { COLORS, NEUTRAL, analyzeColors, feelTemp, fetchWeather, findPlace, harmonious, hexToRgb, weatherIcon } from './meta.js';
 
 // Kategorien mit ihrem Platz auf der Figur: [links, oben, Breite, Höhe] in Prozent.
 // z bestimmt die Reihenfolge: Schuhe unten, Mütze ganz oben.
@@ -22,7 +22,7 @@ const TOPS = ['shirt', 'pulli', 'jacke', 'kleid'];
 const NO_PATTERN = ['schuhe', 'tasche', 'muetze', 'hals'];
 const SEASONS = [['ganz', 'Ganzjahr'], ['sommer', 'Sommer'], ['uebergang', 'Übergang'], ['winter', 'Winter']];
 const OCCASIONS = [['alltag', 'Alltag'], ['arbeit', 'Arbeit'], ['party', 'Party'], ['sport', 'Sport']];
-const APP_VERSION = 9;
+const APP_VERSION = 10;
 const SKIN = { '--skin-1': '#efe5dc', '--skin-2': '#d9cabd', '--skin-3': '#c4b2a3' };
 
 const MANNEQUIN = `
@@ -240,10 +240,12 @@ function select(cat, itemId, dir = 1) {
   popFigure();
   saveSel();
   updateFooter();
+  hideWhy();
 }
 
 // Ganzes Outfit anziehen, Teil für Teil mit kleiner Verzögerung
 async function applyOutfit(sel) {
+  hideWhy();
   const target = { ...emptySel(), ...sel };
   for (const c of CATS) {
     const id = target[c.id] && itemById(target[c.id]) ? target[c.id] : null;
@@ -480,6 +482,8 @@ async function toggleWorn() {
   const sel = effective(state.sel);
   if (isEmpty(sel)) return toast('Die Figur hat noch nichts an');
   if (Object.values(sel).some((id) => id && itemById(id).wish)) return toast('Teile von der Wunschliste kann man noch nicht tragen 😉');
+  lastSuggestion = null;
+  tasteChanged();
   const key = dayKey();
   const ex = state.worn.find((w) => w.id === key);
   if (ex && selKey(ex.sel) === selKey(sel)) {
@@ -517,12 +521,95 @@ function pick(list) {
   return list[list.length - 1].id;
 }
 
-function makeOutfit({ t = null, rain = 0, pool } = {}) {
+// ---------- Geschmack lernen ----------
+// Aus gemerkten Outfits (zählen doppelt), getragenen Tagen und übersprungenen
+// Vorschlägen (zählen leicht negativ) entsteht ein Profil: welche Farben und
+// welche Teile Isabell gern zusammen trägt. Alles bleibt auf dem Handy.
+const pairKey = (a, b) => (a < b ? `${a}|${b}` : `${b}|${a}`);
+const mainColors = (item) => (item.colors || []).filter((c) => c.s >= 0.2).slice(0, 2).map((c) => c.n);
+const outfitItems = (sel) => Object.values(effective(sel)).filter(Boolean).map(itemById).filter(Boolean);
+let tasteCache = null;
+const tasteChanged = () => { tasteCache = null; };
+
+function buildTaste() {
+  if (tasteCache) return tasteCache;
+  const colorPairs = new Map(), itemPairs = new Map();
+  const add = (m, k, w) => m.set(k, (m.get(k) || 0) + w);
+  const learn = (sel, w) => {
+    const items = outfitItems(sel);
+    for (let a = 0; a < items.length; a++) {
+      for (let b = a + 1; b < items.length; b++) {
+        add(itemPairs, pairKey(items[a].id, items[b].id), w);
+        for (const ca of mainColors(items[a])) for (const cb of mainColors(items[b])) add(colorPairs, pairKey(ca, cb), w / 2);
+      }
+    }
+  };
+  for (const o of state.outfits) learn(o.sel, 2);
+  for (const w of state.worn) learn(w.sel, daysSince(keyToDate(w.id)) <= 90 ? 1 : 0.5);
+  const skips = store('skips') || [];
+  for (const s of skips) learn(s.sel, -0.5);
+  tasteCache = { colorPairs, itemPairs, n: state.outfits.length + state.worn.length };
+  return tasteCache;
+}
+
+function tasteScore(sel, taste = buildTaste()) {
+  const items = outfitItems(sel);
+  let sum = 0, cnt = 0;
+  for (let a = 0; a < items.length; a++) {
+    for (let b = a + 1; b < items.length; b++) {
+      let c = 0, cc = 0;
+      for (const ca of mainColors(items[a])) for (const cb of mainColors(items[b])) { c += taste.colorPairs.get(pairKey(ca, cb)) || 0; cc++; }
+      sum += (cc ? c / cc : 0) + 1.5 * (taste.itemPairs.get(pairKey(items[a].id, items[b].id)) || 0);
+      cnt++;
+    }
+  }
+  return cnt ? sum / cnt : 0;
+}
+
+// Genau dieses Outfit in den letzten 3 Tagen getragen? Dann lieber etwas anderes.
+function wornRecently(sel) {
+  const key = selKey(sel);
+  return state.worn.some((w) => selKey(w.sel) === key && daysSince(keyToDate(w.id)) <= 3);
+}
+
+// Übersprungene Vorschläge merken: Wer direkt nochmal würfelt, mochte den letzten nicht so.
+let lastSuggestion = null;
+function noteSkip() {
+  if (!lastSuggestion || Date.now() - lastSuggestion.t > 60000) return;
+  if (selKey(state.sel) !== selKey(lastSuggestion.sel)) return; // inzwischen selbst geändert
+  const skips = (store('skips') || []).slice(-49);
+  skips.push({ sel: effective(lastSuggestion.sel), t: Date.now() });
+  store('skips', skips);
+  tasteChanged();
+}
+
+function makeOutfit(opts = {}) {
+  const r = pickOutfit(opts);
+  return r ? r.sel : null;
+}
+
+// Viele passende Kandidaten würfeln und den nehmen, der am besten zum Geschmack passt
+function pickOutfit({ t = null, rain = 0, pool, noise = 0.8 } = {}) {
+  const taste = buildTaste();
+  const cands = [];
+  for (let k = 0; k < 14; k++) {
+    const s = rollOutfit({ t, rain, pool });
+    if (!s) break;
+    const score = Math.log1p(Math.max(0, tasteScore(s.sel, taste))) + Math.min(0, tasteScore(s.sel, taste)) * 0.5
+      + (s.ok ? 0 : -3) + (wornRecently(s.sel) ? -2 : 0) + Math.random() * noise;
+    cands.push({ ...s, score });
+  }
+  if (!cands.length) return null;
+  cands.sort((a, b) => b.score - a.score);
+  return cands[0];
+}
+
+function rollOutfit({ t = null, rain = 0, pool } = {}) {
   const P = Object.fromEntries(CATS.map((c) => [c.id, (pool || itemsOf(c.id)).filter((i) =>
     i.cat === c.id && !i.wish && !i.wash && matches(i) && seasonOkForTemp(i, t))]));
   const chance = (p) => Math.random() < p;
   let best = null;
-  for (let tries = 0; tries < 80; tries++) {
+  for (let tries = 0; tries < 40; tries++) {
     const s = emptySel();
     const bottoms = P.hose.length + P.rock.length;
     if (P.kleid.length && (t == null || t >= 15) && chance(bottoms ? 0.3 : 1)) {
@@ -542,16 +629,76 @@ function makeOutfit({ t = null, rain = 0, pool } = {}) {
     if (P.hals.length && chance(t == null ? 0.3 : t < 8 ? 0.7 : 0.2)) s.hals = pick(P.hals);
     const chosen = Object.values(s).filter(Boolean).map(itemById);
     if (!chosen.length) return null;
-    if (harmonious(chosen)) return s;
-    if (!best) best = s;
+    if (harmonious(chosen)) return { sel: s, ok: true };
+    if (!best) best = { sel: s, ok: false };
   }
   return best;
 }
 
+// ---------- „Warum?“: kurze Begründung zum Vorschlag ----------
+function explain(sel, w) {
+  const e = effective(sel);
+  const items = outfitItems(sel);
+  const parts = [];
+  if (w) {
+    const t = Math.round(feelTemp(w));
+    if (w.rain >= 50 && e.jacke) parts.push(`${w.rain} % Regen → mit Jacke`);
+    else if (e.jacke) parts.push(`${t}° → mit Jacke`);
+    else if (e.pulli) parts.push(`${t}° → mit Pulli`);
+    else parts.push(`${t}° → luftig`);
+  }
+  const colors = [...new Set(items.flatMap(mainColors))];
+  const strong = colors.filter((c) => !NEUTRAL.has(c));
+  if (!strong.length && colors.length) parts.push(`neutral: ${colors.slice(0, 3).join(', ')}`);
+  else if (strong.length === 1) parts.push(`${strong[0]} als Farbakzent`);
+  else if (strong.length > 1) parts.push(`Ton in Ton: ${strong.slice(0, 2).join(' & ')}`);
+  const patterned = items.filter((i) => i.pattern && !['schuhe', 'tasche', 'muetze', 'hals'].includes(i.cat));
+  if (patterned.length === 1) parts.push(`${CAT[patterned[0].cat].one} mit Muster, Rest ruhig`);
+  else if (patterned.length > 1) parts.push('Muster-Mix, mutig!');
+  const taste = buildTaste();
+  if (taste.n) {
+    let bestItem = { s: 0 }, bestColor = { s: 0 };
+    for (let a = 0; a < items.length; a++) {
+      for (let b = a + 1; b < items.length; b++) {
+        const s = taste.itemPairs.get(pairKey(items[a].id, items[b].id)) || 0;
+        if (s > bestItem.s) bestItem = { s, a: items[a], b: items[b] };
+        for (const ca of mainColors(items[a])) for (const cb of mainColors(items[b])) {
+          const s = taste.colorPairs.get(pairKey(ca, cb)) || 0;
+          if (ca !== cb && s > bestColor.s) bestColor = { s, a: ca, b: cb };
+        }
+      }
+    }
+    if (bestItem.s >= 2) parts.unshift(`${CAT[bestItem.a.cat].one} + ${CAT[bestItem.b.cat].one} trägst du gern zusammen`);
+    else if (bestColor.s >= 1) parts.unshift(`${bestColor.a} + ${bestColor.b} trägst du gern`);
+  }
+  const resting = items.map((i) => ({ i, d: lastWornDays(i.id) })).filter((x) => x.d != null && x.d >= 21).sort((a, b) => b.d - a.d)[0];
+  if (resting) parts.push(`${CAT[resting.i.cat].one} lange nicht getragen (${resting.d} Tage)`);
+  return parts.slice(0, 3);
+}
+
+let whyTimer;
+function showWhy(parts) {
+  const box = $('#why');
+  clearTimeout(whyTimer);
+  if (!parts || !parts.length) { box.hidden = true; return; }
+  $('#whyText').textContent = parts.join(' · ');
+  box.hidden = false;
+  whyTimer = setTimeout(() => (box.hidden = true), 10000);
+}
+const hideWhy = () => { $('#why').hidden = true; };
+
+async function presentSuggestion(r, w) {
+  lastSuggestion = { sel: effective(r.sel), t: Date.now() };
+  await applyOutfit(r.sel);
+  lastSuggestion.sel = effective(state.sel);
+  showWhy(explain(state.sel, w));
+}
+
 function shuffle() {
-  const s = makeOutfit();
-  if (!s) return toast(state.items.length ? 'Nichts passt zum Filter' : 'Erst ein paar Teile fotografieren');
-  applyOutfit(s);
+  noteSkip();
+  const r = pickOutfit({ noise: 1.6 });
+  if (!r) return toast(state.items.length ? 'Nichts passt zum Filter' : 'Erst ein paar Teile fotografieren');
+  presentSuggestion(r, null);
 }
 
 async function getWeather() {
@@ -583,14 +730,11 @@ async function suggestToday() {
   } catch {
     toast('Wetter nicht erreichbar – Vorschlag ohne Wetter');
   }
+  noteSkip();
   const t = w ? feelTemp(w) : null;
-  const s = makeOutfit({ t, rain: w ? w.rain : 0 });
-  if (!s) return toast('Für dieses Wetter passt nichts zum Filter');
-  await applyOutfit(s);
-  if (w) {
-    const why = t < 10 ? 'warm einpacken' : w.rain >= 50 ? 'Regen möglich, mit Jacke' : t >= 22 ? 'luftig und leicht' : 'passend zum Wetter';
-    toast(`${weatherIcon(w.code)} ${Math.round(w.max)}° heute – ${why}`, 3200);
-  }
+  const r = pickOutfit({ t, rain: w ? w.rain : 0 });
+  if (!r) return toast('Für dieses Wetter passt nichts zum Filter');
+  await presentSuggestion(r, w);
 }
 
 // ---------- Wetter-Ort ----------
@@ -645,6 +789,8 @@ async function saveOutfit() {
   const sel = effective(state.sel);
   if (isEmpty(sel)) return toast('Die Figur hat noch nichts an');
   const key = selKey(sel);
+  lastSuggestion = null;
+  tasteChanged();
   const existing = state.outfits.find((o) => selKey(o.sel) === key);
   if (existing) {
     state.outfits = state.outfits.filter((o) => o !== existing);
@@ -689,6 +835,7 @@ function renderOutfits() {
       if (!confirm('Dieses Outfit löschen?')) return;
       state.outfits = state.outfits.filter((x) => x !== o);
       await db.remove('outfits', o.id);
+      tasteChanged();
       renderOutfits();
       updateFooter();
     };
@@ -1073,6 +1220,16 @@ function renderStats() {
     ? `<div class="thumbs">${favs.map((x) => thumbHtml(x.i, `${x.n}× getragen`)).join('')}</div>`
     : '<p class="tip">Tippe unten auf „Getragen“, wenn du ein Outfit anhast. Dann siehst du hier deine Lieblinge.</p>';
 
+  const taste = buildTaste();
+  const styles = [...taste.colorPairs.entries()]
+    .map(([k, s]) => ({ k, s, c: k.split('|') }))
+    .filter((x) => x.s > 0 && x.c[0] !== x.c[1])
+    .sort((a, b) => b.s - a.s).slice(0, 4);
+  html += '<h3 class="sec">Dein Stil</h3>';
+  html += styles.length
+    ? `<p class="tip">Gelernt aus ${state.outfits.length} gemerkten Outfits und ${state.worn.length} getragenen Tagen. Danach richten sich „Vorschlag“ und „Zufall“.</p><div class="styles">${styles.map((x) => `<div class="style-row"><i style="background:${COLORS[x.c[0]]}"></i><i style="background:${COLORS[x.c[1]]}"></i><span>${esc(x.c[0])} + ${esc(x.c[1])}</span></div>`).join('')}</div>`
+    : '<p class="tip">Je öfter du Outfits merkst oder als getragen einträgst, desto besser lernt die App deinen Stil. Danach richten sich dann „Vorschlag“ und „Zufall“.</p>';
+
   if (wash.length) html += `<h3 class="sec">In der Wäsche</h3><div class="thumbs">${wash.map((i) => thumbHtml(i, CAT[i.cat].one)).join('')}</div>`;
   if (wishes.length) html += `<h3 class="sec">Wunschliste</h3><div class="thumbs">${wishes.map((i) => thumbHtml(i, CAT[i.cat].one)).join('')}</div>`;
 
@@ -1387,6 +1544,7 @@ async function loadAll() {
   fitted.clear();
   [state.items, state.outfits, state.worn, state.trips] = await Promise.all(
     ['items', 'outfits', 'worn', 'trips'].map((s) => db.getAll(s)));
+  tasteChanged();
   await Promise.all(state.items.map((i) => prepareFitted(i).catch((err) => console.warn('Hose', err))));
   const sel = store('sel') || {};
   state.sel = emptySel();
@@ -1510,6 +1668,7 @@ async function init() {
     if (!item || !confirm(`Dieses Teil (${CAT[item.cat].one}) wirklich löschen?`)) return;
     await db.remove('items', item.id);
     state.items = state.items.filter((i) => i !== item);
+    tasteChanged();
     if (state.sel[item.cat] === item.id) select(item.cat, null, -1);
     dropUrls(item.id);
     editId = null;
@@ -1517,6 +1676,7 @@ async function init() {
     updateHint();
     toast('Teil gelöscht');
   };
+  $('#whyClose').onclick = hideWhy;
   $('#btnExport').onclick = exportBackup;
   $('#inImport').onchange = importBackup;
 

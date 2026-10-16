@@ -209,3 +209,13 @@ html.retro .toast {
 html.retro .install-hint { border-radius: 0; background: var(--r-navy); color: #e9ecff; border: 2px solid #000; font: 18px var(--r-term); }
 html.retro .install-hint .icon-btn { color: #e9ecff; }
 html.retro .app-version { font: 16px var(--r-term); }
+
+/* „Warum?“-Kärtchen als Retro-Hinweisfenster im mittleren Fenster */
+html.retro .why {
+  width: min(calc(66% - 14px), 286px); bottom: 16px; border-radius: 0; background: #fffbe6; color: var(--r-ink); border: 1px solid #000;
+  box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #b9b28a, 3px 3px 0 rgba(0, 0, 0, .3); font: 16px/1.05 var(--r-term);
+}
+html.retro .why::before { content: "WARUM? "; font: 700 10px/1 var(--r-pixel); color: var(--r-purple-lo); }
+html.retro .why button { border-radius: 0; }
+html.retro .style-row { border-radius: 0; background: var(--r-panel); border: 1px solid #000; font: 18px var(--r-term); }
+html.retro .style-row i { border-radius: 0; border-color: #000; }

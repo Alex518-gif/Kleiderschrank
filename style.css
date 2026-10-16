@@ -379,3 +379,18 @@ input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; }
 /* Wetterzeile in eigener Zeile über die volle Breite, damit der Ort hineinpasst */
 .top { flex-wrap: wrap; }
 .top .weather { flex: 1 0 100%; margin-top: 2px; }
+
+/* „Warum?“-Kärtchen zum Vorschlag */
+.why {
+  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 4;
+  width: min(calc(100% - 32px), 380px); padding: 8px 36px 8px 12px; border-radius: 14px;
+  background: var(--card); color: var(--ink); box-shadow: var(--shadow); font-size: 13px; line-height: 1.35;
+  animation: drop .3s ease;
+}
+.why::before { content: "Warum? "; font-weight: 700; color: var(--accent); }
+.why button { position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; }
+.why button svg { width: 14px; height: 14px; }
+.styles { display: grid; gap: 6px; }
+.style-row { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: var(--bg); border-radius: 12px; font-size: 14px; }
+.style-row i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .15); flex: none; }
+.style-row span { margin-left: 4px; }
